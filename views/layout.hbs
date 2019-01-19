@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{{title}}</title>
+  <meta charset="utf-8">
+  <meta content="ie=edge" http-equiv="x-ua-compatible">
+  <title>Projet Webmapping</title>
+  <meta content="Luxury is a premium adman dashboard template based on bootstrap" name="description">
+  <meta content="width=device-width,initial-scale=1,user-scalable=0" name="viewport">
+  <!--<link href="apple-touch-icon.png" rel="apple-touch-icon">-->
+
+  <!-- site-wide styles -->
+  <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+  <link href="/stylesheets/site.css" rel="stylesheet">
+  <link rel="stylesheet" href="/stylesheets/switchery.css">
+  <link href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css" rel="stylesheet" type="text/css">
+  <link href="/stylesheets/style.css" rel="stylesheet" />
+
+  <!-- current page styles -->
+  <link href="/stylesheets/demos.css" rel="stylesheet">
+  <link href="/stylesheets/font-awesome.css" rel="stylesheet">
+  <link href="/stylesheets/material-design-iconic-font.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600" rel="stylesheet">
+  <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
+  <script src="/javascripts/breakpoints.min.js"></script>
+  <script>Breakpoints({
+      xs: { min: 0, max: 575 },
+      sm: { min: 576, max: 767 },
+      md: { min: 768, max: 991 },
+      lg: { min: 992, max: 1199 },
+      xl: { min: 1200, max: Infinity }
+    });</script>
+</head>
+
+<body class="menubar-top menubar-light demo-examples">
+  <!--[if lt IE 10]>
+	<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+		your browser</a> to improve your experience.</p>
+	<![endif]-->
+  <nav class="site-navbar navbar fixed-top navbar-expand-lg navbar-light bg-blue">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="index.html">
+        <span class="brand-name hidden-fold">Projet WebMapping</span>
+      </a>
+
+      <button class="navbar-toggler hidden-lg-up collapsed" data-toggle="navbar-search" type="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="zmdi zmdi-hc-lg zmdi-search"></span>
+      </button>
+
+      <button aria-expanded="false" class="navbar-toggler hidden-lg-up collapsed" data-target="#site-navbar-collapse"
+        data-toggle="collapse" type="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="zmdi zmdi-hc-lg zmdi-more"></span>
+      </button>
+    </div><!-- /.navbar-header -->
+
+    <div class="collapse navbar-collapse" id="site-navbar-collapse">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <span>
+            ENSP 5GI - 2019
+          </span>
+        </li>
+      </ul>
+
+    </div><!-- /.collapse -->
+  </nav><!-- /.site-navbar -->
+  <header class="site-header">
+    <div class="jumbotron jumbotron-fluid">
+      <div class="jumbotron-text">
+        <h3 class="text-primary text-center">Bienvenue Sur Notre Plateforme Webmapping</h3>
+        <!--<small class="font-italic text-muted">Bootstrap 4 Web App Kit</small>-->
+      </div><!-- /.jumbotron-text -->
+
+    </div><!-- /.jumbotron -->
+
+    <div class="breadcrumb">
+      <ol class="breadcrumb-tree">
+        <li class="breadcrumb-item">
+          <a href="#">
+            <span class="zmdi zmdi-home mr-1"></span>
+            <span>Home</span>
+          </a>
+        </li>
+      </ol>
+    </div><!-- /.breadcrumb -->
+  </header><!-- /.site-header -->
+
+  {{{body}}}
+
+  <footer class="site-footer">
+    <div class="mr-auto">
+      <p class="text-primary mb-0">Made By Groupe #</p>
+    </div>
+  </footer><!-- /.site-footer -->
+
+  <div aria-hidden="true" aria-labelledby="addLayer" class="modal fade" id="addlayer" role="dialog" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Charger une nouvelle couche</h5>
+          <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <form class="m-auto" action="/addlayer" method="post">
+                <div class="input-group">
+                  <div class="custom-file">
+                    <input class="custom-file-input" id="customFile" type="file" accept=".shp, .dbf">
+                    <label class="custom-file-label" for="customFile">Choisir Le ShapeFile De La Couche à Charger</label>
+                  </div>
+                </div>
+                <div class="row mt-3">
+                  <div class="col-md-3 m-auto">
+                    <button class="btn btn-outline-dark btn-block" type="submit">
+                      <i class="fa fa-download" style="font-size: 16px;"></i> <span style="font-size: 16px;">Ajouter</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="col-md-4 ml-auto">
+            <button class="btn btn-danger btn-block" data-dismiss="modal" type="button">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<!-- core plugins -->
+<script>
+  var obj = {{{ json layerGroup }}}	
+</script>
+<script src="/javascripts/jquery.min.js"></script>
+<script src="/javascripts/popper.min.js"></script>
+<script src="/javascripts/bootstrap.js"></script>
+<script src="/javascripts/jquery.waypoints.min.js"></script>
+<script src="/javascripts/switchery.js"></script>
+<script src="/javascripts/main.js"></script>
+<script src="/javascripts/map_test.js"></script>
+
+</html>

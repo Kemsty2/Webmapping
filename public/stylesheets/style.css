@@ -1,0 +1,199 @@
+#vmap-world1 {
+    background-color: #e0f2f1;
+    width: 100%;
+    height: 760px;
+}
+#vmap-world1{
+    border: 2px solid #c8a88e;
+    bottom: 2px;
+    position: relative;
+}
+.layertree {
+    width: 20%;
+    height: calc(100% - 3.5em);
+    float: left;
+}
+.layertree .layertree-buttons {
+    height: 2em;
+    border-bottom: 1px solid grey;
+}
+.layertree .layercontainer {
+    position: relative;
+    height: calc(100% - 2em);
+    overflow-y: auto;
+}
+.layercontainer .layer {
+    position: relative;
+    height: 2em;
+}
+.layer span:first-of-type {
+    position: absolute;
+    left: 1.5em;
+    max-width: calc(100% - 1.5em);
+}
+#overlay{
+    background-color: white; 
+    border-radius: 10px; 
+    border: 1px solid black; 
+    padding: 5px 10px;
+}
+
+.ol-zoomslider {
+    background-color: #3b5998;
+}
+
+.ol-control button {
+    background-color: rgba(219,63,63,.5);
+}
+.ol-control button:focus {
+    background-color: rgba(219,63,63,.5);
+}
+.ol-control button:hover {
+    background-color: rgba(219,63,63,1);
+}
+.ol-scale-line {
+    background-color: rgba(219,63,63,.5);
+}
+.ol-overviewmap {
+    bottom: 2em;
+}
+
+.ol-mouse-position::before {
+    content: "Coordonnées : (";
+    margin-right: 1px;
+    font-weight: 600;
+}
+
+.ol-mouse-position::after {
+    content: ")";
+    font-weight: 600;
+}
+
+.ol-mouse-position {
+    color: #263238;
+    font-size: 18px;
+    font-weight: 400;
+}
+.ol-dragzoom {
+    background-color: rgba(219,63,63,.1);
+    border-width: 2px;
+    border-color: rgba(219,63,63,1);
+}
+.ol-zoomslider {
+    top: calc(1.875em + 6px);
+    left: calc(.5em + 12px);
+    width: 2px;
+}
+.ol-zoomslider-thumb {
+    background-color: rgba(219,63,63,.5);
+    left: -11px !important;
+}
+.ol-zoomslider-thumb:hover {
+    background-color: rgba(219,63,63,1);
+}
+.ol-zoom .ol-zoom-in {
+    border-radius: 50%;
+}
+.ol-zoom .ol-zoom-out {
+    border-radius: 50%;
+    top: 203px;
+    position: relative;
+}
+.ol-zoom {
+    background-color: rgba(255,255,255,0);
+}
+.ol-zoom:hover {
+    background-color: rgba(255,255,255,0);
+}
+.ol-overviewmap.ol-uncollapsible {
+    bottom: 2em;
+}
+.toolbar {
+    height: 2em;
+    display: table;
+    padding-left: .2em;
+}
+.toolbar .ol-control {
+    position: static;
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0;
+}
+.toolbar .ol-control button {
+    border-radius: 2px;
+    background-color: rgba(219,63,63,.5);
+    width: 2em;
+    display: inline-block;
+}
+.toolbar .ol-control button:hover {
+    background-color: rgba(219,63,63,1);
+}
+
+.ol-mouse-position {
+    top: 2px;
+    left: 39%;
+}
+
+.text-primary {
+    color: #39527b !important;
+}
+
+a {
+    color: #39527b;
+}
+
+.input-file-container {
+    position: relative;
+    width: 225px;
+}
+.js .input-file-trigger {
+    display: block;
+    padding: 14px 45px;
+    background: #39D2B4;
+    color: #fff;
+    font-size: 1em;
+    transition: all .4s;
+    cursor: pointer;
+}
+.js .input-file {
+    position: absolute;
+    top: 0; left: 0;
+    width: 225px;
+    opacity: 0;
+    padding: 14px 0;
+    cursor: pointer;
+}
+.js .input-file:hover + .input-file-trigger,
+.js .input-file:focus + .input-file-trigger,
+.js .input-file-trigger:hover,
+.js .input-file-trigger:focus {
+    background: #34495E;
+    color: #39D2B4;
+}
+
+.file-return {
+    margin: 0;
+}
+.file-return:not(:empty) {
+    margin: 1em 0;
+}
+.js .file-return {
+    font-style: italic;
+    font-size: .9em;
+    font-weight: bold;
+}
+.js .file-return:not(:empty):before {
+    content: "Selected file: ";
+    font-style: normal;
+    font-weight: normal;
+}
+
+.no-padding-l-r{
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+}
+
+#layercard{
+    max-height: 756px;
+    overflow: auto;
+}
