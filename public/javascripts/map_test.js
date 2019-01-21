@@ -6,11 +6,11 @@
 $(function() {
   const format = "image/png";
 
-  const layersGroup = obj.layerGroup.publishables.published;
+  const layersGroup = obj.layers.layer;
   let layers;
   layers = layersGroup.map(layer => {
     const layerTile = new ol.layer.Tile({
-      name: layer.name.slice(-19),
+      name: layer.name,
       source: new ol.source.TileWMS({
         ratio: 1,
         url: "http://localhost:8080/geoserver/Cameroun/wms",
@@ -33,9 +33,12 @@ $(function() {
     name: "Cameroun"
   });
 
-  const projection = new ol.proj.Projection({
-    code: "EPSG:4326"
-  });
+  var projection = new ol.proj.Projection({
+    code: 'EPSG:4326',
+    units: 'degrees',
+    axisOrientation: 'neu',
+    global: false
+});
 
   const map = new ol.Map({
     target: "vmap-world1",
@@ -44,7 +47,7 @@ $(function() {
       //projection: projection,
       center: ol.proj.fromLonLat([12.41, 7.8]),
       zoom: 6.4
-    }),
+    }),   
     controls: ol.control.defaults().extend([
       //new ol.control.Attribution(),
       new ol.control.ScaleLine({
@@ -89,14 +92,12 @@ $(function() {
           viewResolution,
           view.getProjection(),
           {
-            INFO_FORMAT: "text/html",
+            INFO_FORMAT: "application/json",
             FEATURE_COUNT: 50
           }
         );
       if (url) {
-        console.log(url);
-        document.getElementById("info").innerHTML +=
-          '<iframe seamless src="' + url + '"></iframe>';
+        console.log(JSON.parse(url));        
       }
     });
   });
@@ -113,7 +114,7 @@ $(function() {
       )}</label>
       </div>
     </li>`;
-      layerList.append(content);
+      layerList.prepend(content);
       bindInputs(layerId, sublayer);
     });
   });

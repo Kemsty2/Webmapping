@@ -108,10 +108,10 @@
         <div class="modal-body">
           <div class="row">
             <div class="col-md-12">
-              <form class="m-auto" action="/addlayer" method="post">
+              <form class="m-auto" action="/addlayer" method="post" enctype="multipart/form-data">
                 <div class="input-group">
                   <div class="custom-file">
-                    <input class="custom-file-input" id="customFile" type="file" accept=".shp, .dbf">
+                    <input class="custom-file-input" id="customFile" type="file" name="shapefile" accept=".shp, .dbf">
                     <label class="custom-file-label" for="customFile">Choisir Le ShapeFile De La Couche à Charger</label>
                   </div>
                 </div>
