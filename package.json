@@ -17,5 +17,8 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "serve-favicon": "~2.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
   }
 }
