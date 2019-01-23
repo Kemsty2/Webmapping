@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <meta content="ie=edge" http-equiv="x-ua-compatible">
   <title>Projet Webmapping</title>
-  <meta content="Luxury is a premium adman dashboard template based on bootstrap" name="description">
+  <meta content="Projet Webmapping" name="description">
   <meta content="width=device-width,initial-scale=1,user-scalable=0" name="viewport">
   <!--<link href="apple-touch-icon.png" rel="apple-touch-icon">-->
 
@@ -98,7 +98,7 @@
 
   <div aria-hidden="true" aria-labelledby="addLayer" class="modal fade" id="addlayer" role="dialog" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-      <div class="modal-content">
+      <form class="modal-content" action="/addlayer" method="post" enctype="multipart/form-data">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Charger une nouvelle couche</h5>
           <button aria-label="Close" class="close" data-dismiss="modal" type="button">
@@ -108,30 +108,27 @@
         <div class="modal-body">
           <div class="row">
             <div class="col-md-12">
-              <form class="m-auto" action="/addlayer" method="post" enctype="multipart/form-data">
+              <div class="m-auto">
                 <div class="input-group">
                   <div class="custom-file">
                     <input class="custom-file-input" id="customFile" type="file" name="shapefile" accept=".shp, .dbf">
                     <label class="custom-file-label" for="customFile">Choisir Le ShapeFile De La Couche à Charger</label>
                   </div>
                 </div>
-                <div class="row mt-3">
-                  <div class="col-md-3 m-auto">
-                    <button class="btn btn-outline-dark btn-block" type="submit">
-                      <i class="fa fa-download" style="font-size: 16px;"></i> <span style="font-size: 16px;">Ajouter</span>
-                    </button>
-                  </div>
-                </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <div class="col-md-4 ml-auto">
+        <div class="modal-footer row justify-content-end">
+          <div class="col-md-3">
+            <button class="btn btn-success btn-block" data-dismiss="modal" type="submit"><i class="fa fa-download"
+                style="font-size: 16px;"></i>Ajouter</button>
+          </div>
+          <div class="col-md-3">
             <button class="btn btn-danger btn-block" data-dismiss="modal" type="button">Close</button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </body>

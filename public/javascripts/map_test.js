@@ -3,12 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-$(function() {
+$(function () {
   const format = "image/png";
+  const excludeAttribute = ["gid", "osm_id", "osm_way_id", "ref_cog", "geom"];
+  const operateurs = ["=", "<>", ">", ">=", "<", "<=", "LIKE", "IN"];
+  const layersGroup = obj;
+  const cqlAttribut = $("#cqlAttribut");
+  const cqlOperateur = $("#cqlOperateur");
+  let uniqueAttributes = [];
 
-  const layersGroup = obj.layers.layer;
   let layers;
   layers = layersGroup.map(layer => {
+
+    //Constrution de l'ensemble des valeurs attributaires unique
+    layer.attributes.map(attribute => {
+      if (uniqueAttributes.indexOf(attribute) === -1 && excludeAttribute.indexOf(attribute) === -1) {
+        uniqueAttributes.push(attribute);
+      }
+    });
     const layerTile = new ol.layer.Tile({
       name: layer.name,
       source: new ol.source.TileWMS({
@@ -23,9 +35,21 @@ $(function() {
           tilesOrigin: 8.38221740722656 + "," + 1.65466582775116
         },
         serverType: "geoserver"
-      })
+      }),
+      attributes: [...layer.attributes]
     });
     return layerTile;
+  });
+
+  //Ajout dans le select
+  uniqueAttributes.map(attribute => {
+    const options = `<option value="${attribute}">${attribute}</option>`;
+    cqlAttribut.append(options);
+  });
+
+  operateurs.map(operateur => {
+    const options = `<option value="${operateur}">${operateur}</option>`;
+    cqlOperateur.append(options);
   });
 
   const layerGroup = new ol.layer.Group({
@@ -38,7 +62,7 @@ $(function() {
     units: 'degrees',
     axisOrientation: 'neu',
     global: false
-});
+  });
 
   const map = new ol.Map({
     target: "vmap-world1",
@@ -47,7 +71,7 @@ $(function() {
       //projection: projection,
       center: ol.proj.fromLonLat([12.41, 7.8]),
       zoom: 6.4
-    }),   
+    }),
     controls: ol.control.defaults().extend([
       //new ol.control.Attribution(),
       new ol.control.ScaleLine({
@@ -55,7 +79,7 @@ $(function() {
         minwidth: 100
       }),
       new ol.control.MousePosition({
-        coordinateFormat: function(coordinates) {
+        coordinateFormat: function (coordinates) {
           const coord_x = coordinates[0].toFixed(3);
           const coord_y = coordinates[1].toFixed(3);
           return coord_x + ", " + coord_y;
@@ -80,29 +104,42 @@ $(function() {
       ])
   });
 
-  map.on("singleclick", function(evt) {    
+  /* map.on("singleclick", function (evt) {
     var view = map.getView();
-    var viewResolution = view.getResolution();    
-    
+    var viewResolution = view.getResolution();
+
     layers.map(layer => {
       var url = layer
         .getSource()
         .getGetFeatureInfoUrl(
           evt.coordinate,
           viewResolution,
-          view.getProjection(),
-          {
+          view.getProjection(), {
             INFO_FORMAT: "application/json",
             FEATURE_COUNT: 50
           }
         );
       if (url) {
-        console.log(JSON.parse(url));        
+        $.ajax({
+          url: url,
+          type: "GET",          
+          dataType: "json",
+          headers: {
+            'Access-Control-Allow-Origin': '*'
+          },
+          success: function (response) {
+            var resp = JSON.parse(response)
+            console.log(resp);
+          },
+          error: function (xhr, status) {
+            alert("error");
+          }
+        });
       }
     });
-  });
+  }); */
 
-  const layerList = $("#layerList");  
+  const layerList = $("#layerList");
   map.getLayers().forEach(layer => {
     layer.getLayers().forEach((sublayer, j) => {
       const layerId = "layer" + j;
@@ -118,12 +155,58 @@ $(function() {
       bindInputs(layerId, sublayer);
     });
   });
-});
 
-function bindInputs(layerid, layer) {
-  var visibilityInput = $("#" + layerid);
-  visibilityInput.on("change", function() {    
-    layer.setVisible(this.checked);
+  $("#filter").on('click', (evt) => {
+    updateFilter();
   });
-  visibilityInput.prop("checked", layer.getVisible());
-}
+
+  $("#reset").on('click', (evt) => {
+    resetFilter();
+  });
+
+  function updateFilter(type) {
+    var filterParams = {
+      'CQL_FILTER': null,
+    };
+    if (type === "reset") {
+      map.getLayers().forEach(function (lyr) {
+        lyr.getLayers().forEach(subLyr => {
+          subLyr.getSource().updateParams(filterParams);
+          subLyr.getSource().refresh()
+        })
+      });
+    } else {
+      const attribut = $("#cqlAttribut").children("option:selected").val();
+      const operateur = $("#cqlOperateur").children("option:selected").val();
+      const valeur = $("#cqlValue").val();
+      var filter = attribut + ' ' + operateur + ' ' + valeur;
+      if ((filter.replace(/^\s\s*/, '').replace(/\s\s*$/, '') != "") || attribut.length !== 0 || operateur.length !== 0) {
+        filterParams["CQL_FILTER"] = filter;
+      }
+      map.getLayers().forEach(function (lyr) {
+        lyr.getLayers().forEach(subLyr => {
+          const attributes = subLyr.get("attributes");
+          if (attributes.indexOf(attribut) !== -1) {
+            subLyr.getSource().updateParams(filterParams);
+            subLyr.getSource().refresh();
+          }
+        })
+      });
+    }
+  }
+
+  function resetFilter() {
+    $("#cqlAttribut").prop("selectedIndex", 0);
+    $("#cqlOperateur").prop("selectedIndex", 0);
+    $("#cqlValue").val("");
+    updateFilter("reset");
+  }
+
+  function bindInputs(layerid, layer) {
+    var visibilityInput = $("#" + layerid);
+    visibilityInput.on("change", function () {
+      layer.setVisible(this.checked);
+    });
+    visibilityInput.prop("checked", layer.getVisible());
+  }
+});

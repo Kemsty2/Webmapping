@@ -20,6 +20,7 @@ upload = multer({
 /* GET home page. */
 router.get('/', async function (req, res, next) {
   try {
+    const base = 'http://localhost:8080/geoserver/rest/workspaces/Cameroun/datastores/cameroun_GisData/featuretypes/';
     const options = {
       uri: 'http://localhost:8080/geoserver/rest/workspaces/Cameroun/layers',
       auth: {
@@ -28,7 +29,26 @@ router.get('/', async function (req, res, next) {
       },
       json: true
     }
-    const layerGroup = await rp(options);
+    let layerGroup = await rp(options);
+    layerGroup = await Promise.all(layerGroup.layers.layer.map(async layer => {
+      const options1 = {
+        uri: base + layer.name,
+        auth: {
+          user: 'admin',
+          pass: 'geoserver'
+        },
+        json: true
+      }
+      const attributesBase = await rp(options1);      
+      let attributes = attributesBase.featureType.attributes.attribute;
+      attributes = attributes.map(attribute => {
+        return attribute.name
+      });
+      return {
+        ...layer,
+        attributes: [...attributes]
+      }
+    }));    
     res.render('index', {
       title: 'Projet Webmapping',
       layerGroup: layerGroup
@@ -39,10 +59,10 @@ router.get('/', async function (req, res, next) {
 });
 
 router.post('/addlayer', upload.single('shapefile'), async (req, res) => {
-  try {    
-    const file = req.file;        
+  try {
+    const file = req.file;
     const raw = __dirname + "\\shapefile\\" + file.filename;
-    console.log(raw);    
+    console.log(raw);
     const options = {
       uri: 'http://localhost:8080/geoserver/rest/workspaces/Cameroun/datastores/cameroun_GisData/external.shp',
       method: 'PUT',
@@ -54,24 +74,44 @@ router.post('/addlayer', upload.single('shapefile'), async (req, res) => {
         'content-type': 'text/plain'
       },
       body: "file:///" + raw
-    }    
+    }
     rp(options).then(data => {
       console.log("Shapefile Uploaded");
     }).catch(err => {
       console.log("Error While Uploading");
     }).finally(() => {
       fs.unlink(file.path, err => {
-        if(err){
+        if (err) {
           console.error(err);
         }
         console.log("file deleted");
       });
-    });    
+    });
     res.redirect('/');
   } catch (error) {
     console.error(error);
     res.redirect('/');
   }
 });
+
+router.get('/layerAttribute/:layerName', async (req, res) => {
+  try {
+    const layerName = req.params.layerName;
+    console.log(layerName);
+    const options = {
+      uri: 'http://localhost:8080/geoserver/rest/workspaces/Cameroun/datastores/cameroun_GisData/featuretypes/' + layerName,
+      auth: {
+        user: 'admin',
+        pass: 'geoserver'
+      },
+      json: true
+    }
+
+    const response = await rp(options);
+    res.json(response.featureType.attributes.attribute);
+  } catch (error) {
+    console.error(error);
+  }
+})
 
 module.exports = router;
