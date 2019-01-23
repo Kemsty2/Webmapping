@@ -94,24 +94,5 @@ router.post('/addlayer', upload.single('shapefile'), async (req, res) => {
   }
 });
 
-router.get('/layerAttribute/:layerName', async (req, res) => {
-  try {
-    const layerName = req.params.layerName;
-    console.log(layerName);
-    const options = {
-      uri: 'http://localhost:8080/geoserver/rest/workspaces/Cameroun/datastores/cameroun_GisData/featuretypes/' + layerName,
-      auth: {
-        user: 'admin',
-        pass: 'geoserver'
-      },
-      json: true
-    }
-
-    const response = await rp(options);
-    res.json(response.featureType.attributes.attribute);
-  } catch (error) {
-    console.error(error);
-  }
-})
 
 module.exports = router;
