@@ -173,7 +173,7 @@ $(function () {
         lyr.getLayers().forEach(subLyr => {
           subLyr.getSource().updateParams(filterParams);
           subLyr.getSource().refresh()
-        })
+        });
       });
     } else {
       const attribut = $("#cqlAttribut").children("option:selected").val();

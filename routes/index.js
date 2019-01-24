@@ -1,14 +1,15 @@
-const express = require('express');
-const rp = require('request-promise');
-const multer = require('multer');
-const fs = require('fs');
+const express = require("express");
+const rp = require("request-promise");
+const multer = require("multer");
+const fs = require("fs");
+const request = require("request");
 let router, storage, upload;
 router = express.Router();
 storage = multer.diskStorage({
-  destination: function (req, file, cb) {
+  destination: function(req, file, cb) {
     cb(null, "routes/shapefile");
   },
-  filename: function (req, file, cb) {
+  filename: function(req, file, cb) {
     if (file.hasOwnProperty("originalname")) cb(null, file.originalname);
   }
 });
@@ -16,66 +17,80 @@ upload = multer({
   storage: storage
 });
 
-
 /* GET home page. */
-router.get('/', async function (req, res, next) {
+router.get("/", async function(req, res, next) {
   try {
-    const base = 'http://localhost:8080/geoserver/rest/workspaces/Cameroun/datastores/cameroun_GisData/featuretypes/';
+    const base =
+      "http://localhost:8080/geoserver/rest/workspaces/Cameroun/datastores/cameroun_GisData/featuretypes/";
     const options = {
-      uri: 'http://localhost:8080/geoserver/rest/workspaces/Cameroun/layers',
+      uri: "http://localhost:8080/geoserver/rest/workspaces/Cameroun/layers",
       auth: {
-        user: 'admin',
-        pass: 'geoserver'
+        user: "admin",
+        pass: "geoserver"
       },
       json: true
-    }
+    };
     let layerGroup = await rp(options);
-    layerGroup = await Promise.all(layerGroup.layers.layer.map(async layer => {
-      const options1 = {
-        uri: base + layer.name,
-        auth: {
-          user: 'admin',
-          pass: 'geoserver'
-        },
-        json: true
-      }
-      const attributesBase = await rp(options1);      
-      let attributes = attributesBase.featureType.attributes.attribute;
-      attributes = attributes.map(attribute => {
-        return attribute.name
-      });
-      return {
-        ...layer,
-        attributes: [...attributes]
-      }
-    }));    
-    res.render('index', {
-      title: 'Projet Webmapping',
+    layerGroup = await Promise.all(
+      layerGroup.layers.layer.map(async layer => {
+        const options1 = {
+          uri: base + layer.name,
+          auth: {
+            user: "admin",
+            pass: "geoserver"
+          },
+          json: true
+        };
+        const attributesBase = await rp(options1);
+        let attributes = attributesBase.featureType.attributes.attribute;
+        attributes = attributes.map(attribute => {
+          return attribute.name;
+        });
+        return {
+          ...layer,
+          attributes: [...attributes]
+        };
+      })
+    );
+    //res.json(layerGroup);
+    res.render("index", {
+      title: "Projet Webmapping",
       layerGroup: layerGroup
     });
   } catch (error) {
     console.error(error);
+    res.render("index", {
+      title: "Projet Webmapping"
+    });
   }
 });
 
-router.post('/addlayer', upload.single('shapefile'), async (req, res) => {
+router.post("/addlayer", upload.single("shapefile"), async (req, res) => {
   try {
     const file = req.file;
-    const raw = __dirname + "\\shapefile\\" + file.filename;
-    console.log(raw);
+    //const raw = __dirname + "\\shapefile\\" + file.filename;
+    if(file){
+      const path = file.path;
     const options = {
-      uri: 'http://localhost:8080/geoserver/rest/workspaces/Cameroun/datastores/cameroun_GisData/external.shp',
-      method: 'PUT',
+      uri:
+        "http://localhost:8080/geoserver/rest/workspaces/Cameroun/datastores/cameroun_GisData/file.shp",
+      method: "PUT",
       auth: {
-        user: 'admin',
-        pass: 'geoserver'
+        user: "admin",
+        pass: "geoserver"
       },
       headers: {
-        'content-type': 'text/plain'
-      },
-      body: "file:///" + raw
-    }
-    rp(options).then(data => {
+        "content-type": "application/zip"
+      }
+      /* body: "file:///" + raw */
+      /* body: fs.createReadStream(path) */
+    };
+    fs.createReadStream(path).pipe(
+      request.put(options).on("end", done => {
+        console.log("success");
+      })
+    );
+    /* rp(options).then(data => {
       console.log("Shapefile Uploaded");
     }).catch(err => {
       console.log("Error While Uploading");
@@ -86,13 +101,15 @@ router.post('/addlayer', upload.single('shapefile'), async (req, res) => {
         }
         console.log("file deleted");
       });
-    });
-    res.redirect('/');
+    }); */
+    res.redirect("/");
+    }else{
+      res.redirect("/");
+    }
   } catch (error) {
     console.error(error);
-    res.redirect('/');
+    res.redirect("/");
   }
 });
-
 
 module.exports = router;
