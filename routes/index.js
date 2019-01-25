@@ -19,7 +19,7 @@ upload = multer({
 
 /* GET home page. */
 router.get("/", async function (req, res, next) {
-  try {
+  try {    
     const base =
       "http://localhost:8080/geoserver/rest/workspaces/Cameroun/datastores/cameroun_GisData/featuretypes/";
     const options = {
@@ -31,7 +31,8 @@ router.get("/", async function (req, res, next) {
       json: true
     };
     let layerGroup = await rp(options);
-    if (layersGroup.layers.hasOwnProperty("layer")) {
+    if (layerGroup) {
+      console.log("here");
       layerGroup = await Promise.all(
         layerGroup.layers.layer.map(async layer => {
           const options1 = {
@@ -87,12 +88,12 @@ router.get("/", async function (req, res, next) {
         title: "Projet Webmapping",
         layerGroup: layerGroup
       });
-    }else{
+    } else {
       //res.json(layerGroup);
-    res.render("index", {
-      title: "Projet Webmapping",
-      layerGroup: []
-    });
+      res.render("index", {
+        title: "Projet Webmapping",
+        layerGroup: []
+      });
     }
   } catch (error) {
     console.error(error);
@@ -103,35 +104,41 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-router.post("/addlayer", upload.single("shapefile"), async (req, res) => {
+router.post("/addlayer", upload.array("shapefile", 10), (req, res) => {
   try {
-    const file = req.file;
+    const files = req.files;
     //const raw = __dirname + "\\shapefile\\" + file.filename;
-    if (file) {
-      const path = file.path;
-      const options = {
-        uri: "http://localhost:8080/geoserver/rest/workspaces/Cameroun/datastores/cameroun_GisData/file.shp",
-        method: "PUT",
-        auth: {
-          user: "admin",
-          pass: "geoserver"
-        },
-        headers: {
-          "content-type": "application/zip"
-        }
-        /* body: "file:///" + raw */
-        /* body: fs.createReadStream(path) */
-      };
-      fs.createReadStream(path).pipe(
-        request.put(options).on("end", done => {
-          fs.unlink(file.path, err => {
-            if (err) {
-              console.error(err);
-            }
-            console.log("file deleted");
-          });
-        })
-      );
+    if (files) {
+      files.map(file => {
+        const path = file.path;
+        const options = {
+          uri: "http://localhost:8080/geoserver/rest/workspaces/Cameroun/datastores/cameroun_GisData/file.shp",
+          method: "PUT",
+          auth: {
+            user: "admin",
+            pass: "geoserver"
+          },
+          headers: {
+            "content-type": "application/zip"
+          }
+          /* body: "file:///" + raw */
+          /* body: fs.createReadStream(path) */
+        };
+        console.log(file);
+        fs.createReadStream(path).pipe(
+          request.put(options).on("end", done => {
+            console.log("file uploaded");
+            fs.unlink(file.path, err => {
+              if (err) {
+                console.error(err);
+              }
+              console.log("file deleted");
+            });
+          }).on('error', err => {
+            console.log(err);
+          })
+        );
+      });
       /* rp(options).then(data => {
         console.log("Shapefile Uploaded");
       }).catch(err => {
