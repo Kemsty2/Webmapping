@@ -25,7 +25,15 @@ const fileInput = document.querySelector(".custom-file-input");
 const label = document.querySelector(".custom-file-label");
 
 fileInput.addEventListener( "change", function( event ) {
-	label.innerHTML = this.value;
+	/* labelName = label.innerHTML;
+	if(labelName.startsWith("Import")){
+		label.innerHTML = "";
+	}
+	const nameFile = this.value;
+	console.log(nameFile.slice(12));
+	label.innerHTML += nameFile.slice(12) + ";"; */
+	label.innerHTML = `${fileInput.files.length} Files To Upload`;	
+	
 });
 
 
